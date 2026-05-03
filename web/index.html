@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bug Bounty Recons — OSINT & Reconnaissance Dashboard by Hemanta Bhattarai">
+  <title>Bug Bounty Recons</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23fff'/><text x='50' y='68' text-anchor='middle' font-size='55' font-weight='bold'>BB</text></svg>">
+</head>
+<body>
+
+  <header class="header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">Bug Bounty Recons</div>
+        <div class="brand-sub">by Hemanta Bhattarai</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="stat"><div class="stat-val">70+</div><div class="stat-lbl">Techniques</div></div>
+      <div class="stat"><div class="stat-val" id="scanCount">0</div><div class="stat-lbl">Scans</div></div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- TARGET -->
+    <div class="target-bar">
+      <div class="target-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Target Domain
+      </div>
+      <div class="target-row">
+        <input type="text" id="targetDomain" class="input" placeholder="example.com" autocomplete="off" spellcheck="false">
+        <button class="btn" onclick="setTarget()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><polyline points="13 2 13 9 20 9"/><path d="M13 2l8 8-8 8H3L11 10 3 2h10z"/></svg>
+          Set Target
+        </button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" id="tabsNav">
+      <button class="tab active" data-tab="recon" onclick="switchTab('recon')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Recon <span class="cnt">55+</span>
+      </button>
+      <button class="tab" data-tab="apikeys" onclick="switchTab('apikeys')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        API Keys <span class="cnt">8</span>
+      </button>
+      <button class="tab" data-tab="osint" onclick="switchTab('osint')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        OSINT Tools <span class="cnt">API</span>
+      </button>
+      <button class="tab" data-tab="infra" onclick="switchTab('infra')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        Infra <span class="cnt">17</span>
+      </button>
+      <button class="tab" data-tab="social" onclick="switchTab('social')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Social <span class="cnt">8</span>
+      </button>
+    </div>
+
+    <!-- PANEL: RECON -->
+    <div class="panel active" id="tab-recon">
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="section-title">Files & Data Exposure</span>
+          <span class="section-desc">Configs, databases, logs, backups</span>
+        </div>
+        <div class="grid" id="g-files"></div>
+      </div>
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span class="section-title">Vulnerabilities & Errors</span>
+          <span class="section-desc">SQLi, redirects, RCE, backdoors</span>
+        </div>
+        <div class="grid" id="g-vuln"></div>
+      </div>
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          <span class="section-title">WordPress & CMS</span>
+          <span class="section-desc">Plugins, themes, CMS detection</span>
+        </div>
+        <div class="grid" id="g-cms"></div>
+      </div>
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span class="section-title">Code & Third-Party Exposure</span>
+          <span class="section-desc">GitHub, GitLab, Pastebin, Gist</span>
+        </div>
+        <div class="grid" id="g-code"></div>
+      </div>
+    </div>
+
+    <!-- PANEL: API KEYS -->
+    <div class="panel" id="tab-apikeys">
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          <span class="section-title">AI & SaaS API Key Dorks</span>
+          <span class="section-desc">Find leaked API keys on the internet</span>
+        </div>
+        <div class="grid" id="g-apikeys"></div>
+      </div>
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          <span class="section-title">GitHub Secret Scanning</span>
+          <span class="section-desc">Search GitHub for exposed credentials</span>
+        </div>
+        <div class="grid" id="g-ghsecrets"></div>
+      </div>
+    </div>
+
+    <!-- PANEL: OSINT -->
+    <div class="panel" id="tab-osint">
+
+      <!-- URLScan -->
+      <div class="osint-box">
+        <div class="osint-head">
+          <div class="osint-title-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            <div>
+              <div class="osint-name">URLScan.io</div>
+              <div class="osint-desc">Domain intelligence — IPs, TLS, server, screenshots</div>
+            </div>
+          </div>
+          <span class="badge badge-api">LIVE API</span>
+        </div>
+        <div class="osint-row">
+          <input type="text" id="urlscanInput" class="input" placeholder="Enter domain...">
+          <button class="btn btn-green" id="urlscanBtn" onclick="runUrlscan()">Scan</button>
+        </div>
+        <div class="results" id="urlscanResults">
+          <div class="empty">Enter a domain and click Scan to query URLScan.io</div>
+        </div>
+      </div>
+
+      <!-- LeakCheck -->
+      <div class="osint-box">
+        <div class="osint-head">
+          <div class="osint-title-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <div>
+              <div class="osint-name">LeakCheck</div>
+              <div class="osint-desc">Check if an email appears in data breaches</div>
+            </div>
+          </div>
+          <span class="badge badge-breach">BREACH DB</span>
+        </div>
+        <div class="osint-row">
+          <input type="text" id="leakcheckInput" class="input" placeholder="user@example.com">
+          <button class="btn btn-red" id="leakcheckBtn" onclick="runLeakcheck()">Check</button>
+        </div>
+        <div class="results" id="leakcheckResults">
+          <div class="empty">Enter an email to check against known breaches</div>
+        </div>
+      </div>
+      <!-- Holehe-style Email Account Checker -->
+      <div class="osint-box">
+        <div class="osint-head">
+          <div class="osint-title-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+            <div>
+              <div class="osint-name">Email Account Checker</div>
+              <div class="osint-desc">Holehe-style check — find which services an email is registered on</div>
+            </div>
+          </div>
+          <span class="badge badge-api">MULTI-CHECK</span>
+        </div>
+        <div class="osint-row">
+          <input type="text" id="holeheInput" class="input" placeholder="target@example.com">
+          <button class="btn" id="holeheBtn" onclick="runHolehe()">Check</button>
+        </div>
+        <div class="results" id="holeheResults">
+          <div class="empty">Enter an email to check registration across 20+ services</div>
+        </div>
+      </div>
+
+      <!-- Quick OSINT Links -->
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <span class="section-title">Quick OSINT Lookups</span>
+        </div>
+        <div class="grid" id="g-osint"></div>
+      </div>
+    </div>
+
+    <!-- PANEL: INFRA -->
+    <div class="panel" id="tab-infra">
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          <span class="section-title">Infrastructure & Network</span>
+          <span class="section-desc">Shodan, Censys, DNS, cloud, certificates</span>
+        </div>
+        <div class="grid" id="g-infra"></div>
+      </div>
+    </div>
+
+    <!-- PANEL: SOCIAL -->
+    <div class="panel" id="tab-social">
+      <div class="section">
+        <div class="section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="section-title">Social Media & Leaks</span>
+          <span class="section-desc">LinkedIn, Reddit, YouTube, bug bounty, passwords</span>
+        </div>
+        <div class="grid" id="g-social"></div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>Made by <strong>Hemanta Bhattarai</strong> &mdash; Bug Bounty Recons</p>
+      <p style="margin-top:4px">Use responsibly. Authorized testing only.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

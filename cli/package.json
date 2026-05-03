@@ -1,0 +1,20 @@
+{
+  "name": "bug-bounty-recons-cli",
+  "version": "1.0.0",
+  "description": "CLI version of Bug Bounty Recons",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "bbrecon": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.16",
+    "open": "^9.1.0"
+  }
+}
