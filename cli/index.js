@@ -40,13 +40,15 @@ function printBanner() {
   console.clear();
   const banner = `
 ______            ______  _____             _          ______                     
-| ___ \\           | ___ \\|  _  |           | |         | ___ \\                    
+| ___ \           | ___ \|  _  |           | |         | ___ \                    
 | |_/ /_   _  __ _| |_/ /| | | |_   _ _ __ | |_ _   _  | |_/ /___  ___ ___  _ __  
-| ___ \\ | | |/ _\` | ___ \\| | | | | | | '_ \\| __| | | | |    // _ \\/ __/ _ \\| '_ \\ 
-| |_/ / |_| | (_| | |_/ /\\ \\_/ / |_| | | | | |_| |_| | | |\\ \\  __/ (_| (_) | | | |
-\\____/ \\__,_|\\__, \\____/  \\___/ \\__,_|_| |_|\\__|\\__, | \\_| \\_\\___|\\___\\___/|_| |_|
+| ___ \ | | |/ _\` | ___ \| | | | | | | '_ \| __| | | | |    // _ \/ __/ _ \| '_ \ 
+| |_/ / |_| | (_| | |_/ /\ \_/ / |_| | | | | |_| |_| | | |\ \  __/ (_| (_) | | | |
+\____/ \__,_|\__, \____/  \___/ \__,_|_| |_|\__|\__, | \_| \_\___|\___\___/|_| |_|
               __/ |                              __/ |                            
              |___/                              |___/                              
+  
+  
 `;
   console.log(chalk.red.bold(banner));
   console.log(chalk.bold.yellow('                  Advanced Bug Bounty Reconnaissance Toolkit'));
@@ -68,7 +70,7 @@ async function promptForDomain() {
 async function startWebServer() {
   if (serverInstance) {
     console.log(chalk.cyan(`\n[+] Web Dashboard already running at `) + chalk.white.bold('http://localhost:8080') + `\n`);
-    try { await open('http://localhost:8080'); } catch(e) {}
+    try { await open('http://localhost:8080'); } catch (e) { }
     return;
   }
 
@@ -131,7 +133,7 @@ async function runNativeTools(domain) {
         }
       }
     } else if (tool === 'headers') {
-      const res = await axios.head(`https://${domain}`).catch(e => e.response || { headers: { error: e.message }});
+      const res = await axios.head(`https://${domain}`).catch(e => e.response || { headers: { error: e.message } });
       Object.entries(res.headers).forEach(([k, v]) => {
         console.log(chalk.yellow.bold(`${k}:`), chalk.white(v));
       });
@@ -205,7 +207,7 @@ async function interactiveMenu(domain) {
 
     const selectedDork = categoryDorks[dorkIndex];
     const url = selectedDork.url.replace(/\{T\}/g, encodeURIComponent(domain));
-    
+
     console.log(chalk.cyan(`\n[+] Opening: `) + chalk.bold.white(selectedDork.name));
     console.log(chalk.dim(url));
     try {
@@ -221,12 +223,12 @@ program
   .argument('[domain]', 'Target domain')
   .action(async (domain) => {
     printBanner();
-    
+
     if (!domain) {
       domain = await promptForDomain();
       console.log();
     }
-    
+
     await interactiveMenu(domain);
     process.exit(0);
   });
