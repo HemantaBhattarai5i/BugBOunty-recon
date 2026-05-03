@@ -9,7 +9,6 @@ import axios from 'axios';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
-import figlet from 'figlet';
 import http from 'http';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -39,9 +38,19 @@ let serverInstance = null;
 
 function printBanner() {
   console.clear();
-  console.log(chalk.red(figlet.textSync('BBRecon', { font: 'Standard', horizontalLayout: 'fitted' })));
-  console.log(chalk.bold.yellow('      Advanced Bug Bounty Reconnaissance Toolkit'));
-  console.log(chalk.dim('      --------------------------------------------\n'));
+  const banner = `
+______            ______  _____             _          ______                     
+| ___ \\           | ___ \\|  _  |           | |         | ___ \\                    
+| |_/ /_   _  __ _| |_/ /| | | |_   _ _ __ | |_ _   _  | |_/ /___  ___ ___  _ __  
+| ___ \\ | | |/ _\` | ___ \\| | | | | | | '_ \\| __| | | | |    // _ \\/ __/ _ \\| '_ \\ 
+| |_/ / |_| | (_| | |_/ /\\ \\_/ / |_| | | | | |_| |_| | | |\\ \\  __/ (_| (_) | | | |
+\\____/ \\__,_|\\__, \\____/  \\___/ \\__,_|_| |_|\\__|\\__, | \\_| \\_\\___|\\___\\___/|_| |_|
+              __/ |                              __/ |                            
+             |___/                              |___/                              
+`;
+  console.log(chalk.red.bold(banner));
+  console.log(chalk.bold.yellow('                  Advanced Bug Bounty Reconnaissance Toolkit'));
+  console.log(chalk.dim('                  --------------------------------------------\n'));
 }
 
 async function promptForDomain() {
